@@ -138,12 +138,24 @@ import { useWeb3 } from "@3rdweb/react";
 
 const Component = () => {
   // You can do whatever you want with this data
-  const { address, chainId, provider } = useWeb3();
+  const { address, chainId, provider, ensName, ensAvatar } = useWeb3();
 
   return (
     <div>
       Address: {address}
       <br />
+      {!!ensName && (
+        <>
+          ENS Username: {ensName}
+          <br />
+        </>
+      )}
+      {!!ensAvatar && (
+        <>
+          <img src={ensAvatar} style={{height: '50px', borderRadius: '50%'}} alt='avatar' />
+          <br />
+        </>
+      )}
       Chain ID: {chainId}
     </div>
   );

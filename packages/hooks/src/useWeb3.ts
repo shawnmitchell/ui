@@ -32,6 +32,8 @@ export interface Web3ContextInterface {
   connectWallet: ReturnType<typeof useConnectWallet>;
   disconnectWallet: () => void;
   getNetworkMetadata: (chainId: number) => NetworkMetadata;
+  ensName?: string;
+  ensAvatar?: string;
 }
 
 const defaultNetworkMetadata: Record<number, NetworkMetadata> = {
@@ -81,6 +83,8 @@ export function useWeb3(): Web3ContextInterface {
     web3Context;
 
   const [balance, setBalance] = useState<Balance>();
+  const [ensName, setEnsName] = useState<string | undefined>();
+  const [ensAvatar, setEnsAvatar] = useState<string | undefined>();
 
   useEffect(() => {
     if (error?.message.includes("The user rejected the request.")) {
@@ -116,7 +120,19 @@ export function useWeb3(): Web3ContextInterface {
       }
     };
 
+    const getEnsFields = async () => {
+      if (account) {
+        const fetchedENSName = await library?.lookupAddress(account);
+        setEnsName(!!fetchedENSName ? fetchedENSName : undefined);
+        if (!!fetchedENSName) {
+          const fetchedENSAvatar = await library?.getAvatar(fetchedENSName);
+          setEnsAvatar(!!fetchedENSAvatar ? fetchedENSAvatar : undefined);
+        }
+      }
+    }
+
     getBalance();
+    getEnsFields();
   }, [library, account]);
 
   const activeProvider = useMemo(() => {
@@ -172,6 +188,8 @@ export function useWeb3(): Web3ContextInterface {
       connectWallet: connect,
       disconnectWallet,
       getNetworkMetadata,
+      ensName,
+      ensAvatar
     }),
     [
       account,
@@ -185,6 +203,8 @@ export function useWeb3(): Web3ContextInterface {
       getNetworkMetadata,
       error,
       library,
+      ensName,
+      ensAvatar
     ],
   );
 }
