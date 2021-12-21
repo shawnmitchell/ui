@@ -129,7 +129,7 @@ export function useWeb3(): Web3ContextInterface {
           setEnsAvatar(!!fetchedENSAvatar ? fetchedENSAvatar : undefined);
         }
       }
-    }
+    };
 
     getBalance();
     getEnsFields();
